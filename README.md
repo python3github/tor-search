@@ -22,9 +22,16 @@ tor_scraping_24.py -имя файла с кодом программы.
 
 
 Может потребоваться установка некоторых модулей (через apt-get или через pip). Например:
+
 sudo apt-get install python3-pip
+
 sudo apt-get install python3-bs4
+
 sudo apt-get install python3-socks
+
 sudo pip3 install setuptools
+
 sudo pip3 install user_agent
+
 sudo apt-get install python3-lxml
+
