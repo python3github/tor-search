@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
 """
-Модуль краулера для сети tor. Собирает на страницах ссылки (внешние и внутринние),
+Краулер (паук) для сети tor. Собирает на страницах ссылки (внешние и внутринние),
  а так же html-теги (title, h1, ... , h6)
 """
-#может потребоваться установка этих программ:
-#sudo apt-get install python3-pip
-#sudo apt-get install python3-bs4
-#sudo apt-get install python3-socks
-#sudo pip3 install setuptools
-#sudo pip3 install user_agent
-#sudo apt-get install python3-lxml
 
 from multiprocessing.dummy import Pool as ThreadPool
 import urllib.request
@@ -138,12 +131,12 @@ def results_work(results, visited_url, all_links_list, write_links_list, error, 
             visited_url.append([line[0], tag.get('lang', 'None'), tag.get('title', 'None'), tag.get('h1', 'None'), tag.get('h2', 'None'), tag.get('h3', 'None'), tag.get('h4', 'None'), tag.get('h5', 'None'), tag.get('h6', 'None')])   # переносим теги из словаря
             for url in line[3]:
                 if str(url) not in all_links_list:   # если ссылку не сохранили ранее, то
-                    all_links_list.append(str(url))  # сохраняем найденные на странице ссылки (html)
+                    all_links_list.append(str(url))  # сохраняем найденные на странице ссылки (html-теги)
                     write_links_list.append(str(url)) # создаем список ссылок для записи в файл
-        if line[4] != None and len(line[4]) > 0:      # проверяем есть ли ссылки найденные в тексте (не html) 
+        if line[4] != None and len(line[4]) > 0:      # проверяем есть ли ссылки найденные в тексте (не html-теги) 
             for link in line[4]:
                 if link not in all_links_from_text:
-                    all_links_from_text.append(link)   # сохраняем найденные в тексте ссылки (не html)
+                    all_links_from_text.append(link)   # сохраняем найденные в тексте ссылки (не html-теги)
         else:       # если работа завершилась ошибкой, то сохраняем информацию об ошибке
             if line[1] != None:
                 error.append(line[1])
