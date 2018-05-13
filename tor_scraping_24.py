@@ -21,16 +21,17 @@ from user_agent import generate_user_agent
 
 
 TIME_START = time.time()
+# регулярное выражение для поиска ссылок на доменн .onion в тексте страниц (не среди html-тегов)
 REGEX_FOR_ONION = '(?:(?:http|https|HTTP|HTTPS)\:\/\/)?(?:\/\/)?[a-zA-Z0-9\.\-\_\:\@\%]{16,}\.onion\/?[a-zA-Zа-яА-ЯёЁ0-9\№\{\}\.\?\/\-\_\=\#\&\%\:\~\+\@\(\)\;\,\'\"\!\$]*'
-PATTERN = re.compile(REGEX_FOR_ONION)
-NUMBER_OF_THREADS = 20
+PATTERN = re.compile(REGEX_FOR_ONION) # компилируем регулярное выражение
+NUMBER_OF_THREADS = 20  #количество потоков (количество ссылок обрабатываемых программой)
 #файлы, указанные ниже, должны существовать в папке откда запускается программа
-FILE_ALL_LINKS = 'all_links.csv'
-FILE_VISITED_LINKS = 'visited_links.csv'
-FILE_INDEX_START = 'index_start.txt'
-FILE_ERROR = 'error.csv'
-FILE_DOMAINS = 'domains_counter.csv'
-FILE_LINKS_FROM_TEXT = 'links_from_text.txt'
+FILE_ALL_LINKS = 'all_links.csv'            #сюда сохраняются все ссылки найденные среди html-тегов, отсюда же берутся ссылки для дальнейшей работы программы
+FILE_VISITED_LINKS = 'visited_links.csv'    #сюда сохраняются собранные html-теги со страниц которые посетили
+FILE_INDEX_START = 'index_start.txt'        #сюда сохраняется индекс на ссылки с которого начнет работу программа при следующем старте
+FILE_ERROR = 'error.csv'                    #сохраняются ошибки возникшие во время работы
+FILE_DOMAINS = 'domains_counter.csv'        #сюда сохраняются доменны, а также счетчик сколько ссылок принадлежат этому доменну
+FILE_LINKS_FROM_TEXT = 'links_from_text.txt' #сюда сохраняются ссылки найденные в тексте страниц, а не среди html-тегов. После проверки на правильность ссылки из этого файла можно добавить в файл all_links.csv
 
 
 def csv_max_size():
@@ -84,7 +85,7 @@ def links_map(i_stop, NUMBER_OF_THREADS, all_links_list, links_for_map, domain_c
     Готовим список новых ссылок для функции map()
     """
     i_start = i_stop
-    bad_site = ['btctic74pykkotsy.onion'] # список плохих сайтов, утечка памяти
+    bad_site = ['btctic74pykkotsy.onion', 'archivecrfip2lpi.onion'] # список плохих сайтов, утечка памяти
     # страницы которые не будем открывать
     not_url3 = [".rm", ".gz", ".7z", ".xz", ".bz"]
     not_url4 = [".avi", ".mp3", ".mp4", ".flv", ".mpg", ".swf", ".svg", ".bmp", ".jpg", ".fb2",
@@ -377,7 +378,7 @@ def main():
         print("%s || время работы: %s сек || общее количество ссылок: %s || доменнов: %s || обрабатываются ссылки с %s по %s" % (time_str, int(time.time() - TIME_START), len(all_links_list), len(domain_count), i_start, i_stop))
         #print("="*80)
 
-        gc.collect()
+        gc.collect() # сборщик мусора в памяти компьютера
         results = map_thread_pool(NUMBER_OF_THREADS, links_for_map)
         
         gc.collect()
@@ -403,7 +404,7 @@ def main():
             now_time = time.time()
         
         # чтобы не делать запись после каждой итерации (это может привести к преждевременному износу носителя данных), сохраняемся после определенного количества ссылок или через определенный интервал времени 
-        num = 2000 
+        num = 2000 # количество собранных ссылок
         # если количество новых ссылок кратно 2000 или прошло указанное количество секунд, то сохраняем данные в файлы
         if (len(all_links_list) // num > counter_for_write_file) or ((time.time() - time_write) > 1800):
             counter_for_write_file = len(all_links_list) // num
