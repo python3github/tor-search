@@ -393,56 +393,69 @@ def main():
         #формируем ссылоки для map()
         i_start, i_stop, links_for_map = links_map(i_stop, NUMBER_OF_THREADS, all_links_list, links_for_map, domain_count)
 
+    print("\nДля корректного завершения программы нажмите 'Ctrl+c' и дождитесь сохранения данных в файл!\n")
+
     while True:
-        results = []
-        time_loc_time = time.localtime()
-        time_str = str(time_loc_time[3]) + ":" + str(time_loc_time[4]) + ":" + str(time_loc_time[5])
-        #print("="*80)
-        print("%s || время работы: %s сек || общее количество ссылок: %s || доменнов: %s || обрабатываются ссылки с %s по %s" % (time_str, int(time.time() - TIME_START), len(all_links_list), len(domain_count), i_start, i_stop))
-        #print("="*80)
+        try:
+            results = []
+            time_loc_time = time.localtime()
+            time_str = str(time_loc_time[3]) + ":" + str(time_loc_time[4]) + ":" + str(time_loc_time[5])
+            #print("="*80)
+            print("%s || время работы: %s сек || общее количество ссылок: %s || доменнов: %s || обрабатываются ссылки с %s по %s" % (time_str, int(time.time() - TIME_START), len(all_links_list), len(domain_count), i_start, i_stop))
+            #print("="*80)
 
-        gc.collect() # сборщик мусора в памяти компьютера
-        results = map_thread_pool(NUMBER_OF_THREADS, links_for_map)
-        
-        gc.collect()
-        visited_url, all_links_list, write_links_list, error, all_links_from_text = results_work(results, visited_url, all_links_list, write_links_list, error, all_links_from_text)
+            gc.collect() # сборщик мусора в памяти компьютера
+            results = map_thread_pool(NUMBER_OF_THREADS, links_for_map)
+            
+            gc.collect()
+            visited_url, all_links_list, write_links_list, error, all_links_from_text = results_work(results, visited_url, all_links_list, write_links_list, error, all_links_from_text)
 
-        # счетчик ссылок для каждого доменна
-        gc.collect()
-        domain_count = url_domain_count(domain_count, write_links_list)
+            # счетчик ссылок для каждого доменна
+            gc.collect()
+            domain_count = url_domain_count(domain_count, write_links_list)
 
-        gc.collect()
-        #формируем ссылки для map()
-        links_for_map = []
-        i_start, i_stop, links_for_map = links_map(i_stop, NUMBER_OF_THREADS, all_links_list, links_for_map, domain_count)
-        if i_start == 0:
-            counter_for_write_file = 0
+            gc.collect()
+            #формируем ссылки для map()
+            links_for_map = []
+            i_start, i_stop, links_for_map = links_map(i_stop, NUMBER_OF_THREADS, all_links_list, links_for_map, domain_count)
+            if i_start == 0:
+                counter_for_write_file = 0
 
-        gc.collect()
+            gc.collect()
 
-        old_time = now_time              # на случай если очень быстро будет открываться много соединений,
-        now_time = time.time()        
-        if (now_time - old_time) < 20:   # чтобы избежать: URLError(OSError(24, 'Too many open files'),)
-            time.sleep(20)               # OSError: [Errno 24] Too many open files: 'all_links.csv'
-            now_time = time.time()
+            old_time = now_time              # на случай если очень быстро будет открываться много соединений,
+            now_time = time.time()        
+            if (now_time - old_time) < 20:   # чтобы избежать: URLError(OSError(24, 'Too many open files'),)
+                time.sleep(20)               # OSError: [Errno 24] Too many open files: 'all_links.csv'
+                now_time = time.time()
 
-        # чтобы не делать запись после каждой итерации (это может привести к преждевременному износу носителя данных), сохраняемся после определенного количества ссылок или через определенный интервал времени 
-        num = 2000 # количество собранных ссылок
-        # если количество новых ссылок кратно 2000 или прошло указанное количество секунд, то сохраняем данные в файлы
-        if (len(all_links_list) // num > counter_for_write_file) or ((time.time() - time_write) > 3600):
-            counter_for_write_file = len(all_links_list) // num
+            # чтобы не делать запись после каждой итерации (это может привести к преждевременному износу носителя данных), сохраняемся после определенного количества ссылок или через определенный интервал времени 
+            num = 2000 # количество собранных ссылок
+            # если количество новых ссылок кратно 2000 или прошло указанное количество секунд, то сохраняем данные в файлы
+            if (len(all_links_list) // num > counter_for_write_file) or ((time.time() - time_write) > 3600):
+                counter_for_write_file = len(all_links_list) // num
+                write_file(FILE_ALL_LINKS, write_links_list)
+                write_file(FILE_ERROR, error)
+                write_file(FILE_VISITED_LINKS, visited_url)                
+                write_file(FILE_DOMAINS, domain_count)
+                write_file(FILE_LINKS_FROM_TEXT, all_links_from_text)
+                write_file(FILE_INDEX_START, str(i_start))
+                visited_url = []
+                write_links_list = []
+                error = []
+                all_links_from_text = []
+                time_write = time.time()
+
+        except KeyboardInterrupt:
+            print("\n*********************\nПодождите, идет сохранение данных в файл!\n*********************\n")
             write_file(FILE_ALL_LINKS, write_links_list)
             write_file(FILE_ERROR, error)
-            write_file(FILE_VISITED_LINKS, visited_url)
-            write_file(FILE_INDEX_START, str(i_stop))
+            write_file(FILE_VISITED_LINKS, visited_url)            
             write_file(FILE_DOMAINS, domain_count)
             write_file(FILE_LINKS_FROM_TEXT, all_links_from_text)
-            visited_url = []
-            write_links_list = []
-            error = []
-            all_links_from_text = []
-            time_write = time.time()
-
+            write_file(FILE_INDEX_START, str(i_start))
+            break
+    
 
 if __name__ == "__main__": 
     main()
