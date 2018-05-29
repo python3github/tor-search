@@ -1,0 +1,131 @@
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load search_split %}
+<html>
+<head>
+<title>Onion Search</title>
+<link rel="stylesheet" href="{% static 'search/css/bootstrap.min.css' %}">
+</head>
+<body>
+    <h1>Tor Search</h1>
+    </br>
+    <p>Запрос должен состоять из двух или более символов</p>
+    <form action="" method="get">{% csrf_token %}
+       <input name="q" type="text" size="80">
+    <button type="submit">SEARCH</button>
+    </br>
+    <p>По вашему запросу: <b>{{ search }}</b> найденно результатов: <b>{{ length_result_search }}</b> за: <b>{{ time_stop }}</b> секунд</p>
+    </br>
+    <hr>
+    </br>
+  {% if results %}
+    {% for line in results %}     
+
+        {% if line.title != 'None' and line.title != "['']" %}
+            {% if search in line.title|lower %}
+                {% for s in line.title|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>
+            {% else %}
+               {{ line.title }}</br>
+            {% endif %}
+        {% endif %}
+
+        {% if line.h1 != 'None' and line.h1 != "['']" %}
+            {% if search in line.h1|lower %}
+                {% for s in line.h1|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>
+            {% else %}        
+                {{ line.h1 }}</br>
+            {% endif %}
+        {% endif %}
+
+        {% if line.h2 != 'None' and line.h2 != "['']" %}
+            {% if search in line.h2|lower %}
+                {% for s in line.h2|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>        
+            {% else %}
+                {{ line.h2 }}</br>
+            {% endif %}  
+        {% endif %}
+
+        {% if line.h3 != 'None' and line.h3 != "['']" %}
+            {% if search in line.h3|lower %}
+                {% for s in line.h3|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>
+            {% else %}
+                {{ line.h3 }}</br>
+            {% endif %}
+        {% endif %}
+
+        {% if line.h4 != 'None' and line.h4 != "['']" %}
+            {% if search in line.h3|lower %}
+                {% for s in line.h4|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>
+            {% else %}        
+                {{ line.h4 }}</br>
+            {% endif %}
+        {% endif %}
+
+        {% if line.h5 != 'None' and line.h5 != "['']" %}
+            {% if search in line.h5|lower %}
+                {% for s in line.h5|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>
+            {% else %}
+                {{ line.h5 }}</br>
+            {% endif %}
+        {% endif %}
+
+        {% if line.h6 != 'None' and line.h6 != "['']" %}
+            {% if search in line.h6|lower %}
+                {% for s in line.h6|my_split:search %}
+                    {% if forloop.last %}
+                        {{ s }}
+                    {% else %}
+                        {{ s }}<b>{{ search }}</b>
+                    {% endif %}
+                {% endfor %}</br>
+            {% else %}
+                {{ line.h6 }}</br>
+            {% endif %}
+        {% endif %}
+
+        <a href="{{ line.links }}">{{ line.links }}</a></br>
+        </br></br></br>       
+    {% endfor %}
+    {% bootstrap_pagination results url=last_question %}
+    {#{ table.page|pagination }#}
+  {% endif %}
+
+</body>
+</html>
+
