@@ -129,8 +129,7 @@ def func_links_for_thread_pool(i_stop, all_links_list, list_links_for_thread_poo
 
 def thread_pool(list_links_for_thread_pool):
     """
-    Функция получает ссылки и обробатывает их в многопоточном режиме. Если происходит TimeoutError то рекурсивно
-    обрабатывается уполовиненый объем ссылок, и так пока не останется 1 ссылка. 
+    Функция получает ссылки и обробатывает их в многопоточном режиме. 
     """ 
     results = []
     error = None
