@@ -146,8 +146,7 @@ def get_html(url):
     """
     error = None
     html = None
-    try:
-        #print('  START: {} || URL: {}'.format(time.ctime(), url))
+    try:        
         headers = {"User-Agent": generate_user_agent()}
         req = urllib.request.Request(url, None, headers)
         with urlopen(req) as fio:
