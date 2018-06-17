@@ -405,7 +405,7 @@ def main():
             results = []
             time_loc_time = time.localtime()
             time_str = str(time_loc_time[3]) + ":" + str(time_loc_time[4]) + ":" + str(time_loc_time[5])
-            print("%s || время работы: %s сек || общее количество ссылок: %s || доменнов: %s || обрабатываются ссылки с %s по %s" % (time_str, int(time.time() - TIME_START), len(all_links_list), len(domain_count), i_start, i_stop))
+            print("%s || время работы: %s сек || общее количество ссылок: %s || сайтов: %s || обрабатываются ссылки с %s по %s" % (time_str, int(time.time() - TIME_START), len(all_links_list), len(domain_count), i_start, i_stop))
 
             gc.collect()                   # сборщик мусора (нужен для очистки памяти компьютера)
             
