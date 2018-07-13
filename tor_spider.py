@@ -117,7 +117,7 @@ def func_links_for_thread_pool(i_stop, all_links_list, list_links_for_thread_poo
                 if url_parse.path == '' or url_parse.path == '/' or (url_parse.path[-4:] in in_url4) or (url_parse.path[-5:] in in_url5) or (url_parse.path[-6:] in in_url6):
                     if (url_parse.query[-3:].lower() not in not_url3) and (url_parse.query[-4:].lower() not in not_url4) and (url_parse.query[-5:].lower() not in not_url5) and (url_parse.query[-6:].lower() not in not_url6):
                         if (url_parse.netloc not in bad_site) and (domain_count.get(url_parse.netloc, 0) < 2000): # сравниваем счетчик сохраненных ссылок на доменн
-                            link = urlunparse((url_parse.scheme, url_parse.netloc, url_parse.path, url_parse.params, url_parse.query, ''))     # создаем полную ссылку
+                            link = urlunparse((url_parse.scheme, url_parse.netloc, url_parse.path, url_parse.params, url_parse.query, ''))     # создаем полную ссылку без якроя
                             if link not in list_links_for_thread_pool:
                                 list_links_for_thread_pool.append(link)
         else:
@@ -203,7 +203,7 @@ def get_soup_links(soup, url):
                 href_url_parse = urlparse(link.attrs['href'])  #разбиваем url-ссылку на состовляющие
                 if href_url_parse.netloc == "" and href_url_parse.path != "":  # если ссылка внутрення
                     url_parse = urlparse(url)
-                    url_un_parse = urlunparse((url_parse.scheme, url_parse.netloc, href_url_parse.path, href_url_parse.params, href_url_parse.query, ''))     #создаем полную ссылку
+                    url_un_parse = urlunparse((url_parse.scheme, url_parse.netloc, href_url_parse.path, href_url_parse.params, href_url_parse.query, ''))     #создаем полную ссылку без якоря
                     links.append(url_un_parse.replace(chr(173), ''))#удаляем символ "Место возможного переноса" (или "Мягкий дефис")
                 elif href_url_parse.netloc[-6:] == ".onion":
                     url_un_parse = link.attrs['href']
