@@ -21,4 +21,6 @@ tor_spider.py -имя файла с кодом программы.
 **sudo apt-get install python3-socks**  
 **sudo pip3 install setuptools**  
 **sudo pip3 install user_agent**  
-**sudo apt-get install python3-lxml**  
+**sudo apt-get install python3-lxml**
+
+Для правильного отображения цветовой печати необходимо в терминале установить темный цвет фона.
